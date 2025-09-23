@@ -5,15 +5,17 @@ namespace App\Controller;
 use App\Entity\Entry;
 use App\Enum\CurrencyType;
 use App\Enum\EntryType;
+use App\Message\EntryCreated;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class EntryController extends AbstractController
 {
     #[Route('/entry', name: 'create_entry', methods: ['POST'])]
-    public function createEntry(EntityManagerInterface $entityManager): Response
+    public function createEntry(EntityManagerInterface $entityManager, MessageBusInterface $bus): Response
     {
         $entry = new Entry();
         $entry->setType(EntryType::INCOME);
@@ -24,6 +26,15 @@ final class EntryController extends AbstractController
 
         $entityManager->persist($entry);
         $entityManager->flush();
+
+        $bus->dispatch(new EntryCreated(
+            $entry->getId(),
+            $entry->getType()->value,
+            $entry->getAmount(),
+            $entry->getCurrency()->value,
+            $entry->getDescription(),
+            $entry->getCreatedAt(),
+        ));
 
         return $this->json(['id' => $entry->getId()]);
     }
