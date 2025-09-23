@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\CurrencyType;
 use App\Enum\EntryType;
 use App\Repository\EntryRepository;
 use Doctrine\DBAL\Types\Types;
@@ -26,6 +27,9 @@ class Entry
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column(enumType: CurrencyType::class)]
+    private ?CurrencyType $currency = null;
 
     public function getId(): ?int
     {
@@ -76,6 +80,18 @@ class Entry
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getCurrency(): ?CurrencyType
+    {
+        return $this->currency;
+    }
+
+    public function setCurrency(CurrencyType $currency): static
+    {
+        $this->currency = $currency;
 
         return $this;
     }

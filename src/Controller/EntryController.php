@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Entry;
+use App\Enum\CurrencyType;
 use App\Enum\EntryType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,6 +19,7 @@ final class EntryController extends AbstractController
         $entry->setType(EntryType::INCOME);
         $entry->setDescription('description');
         $entry->setAmount(10.12);
+        $entry->setCurrency(CurrencyType::EURO);
         $entry->setCreatedAt(new \DateTimeImmutable());
 
         $entityManager->persist($entry);
